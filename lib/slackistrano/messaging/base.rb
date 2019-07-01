@@ -48,7 +48,7 @@ module Slackistrano
 
       def payload_for_failed
         {
-          text: "#{application} in :fire: #{deployer} has failed to #{deploying? ? 'deploy' : 'rollback'} branch #{branch} to #{stage}"
+          text: "#{deployer} has failed to #{deploying? ? 'deploy' : 'rollback'} branch #{branch} of #{application} to #{stage}"
         }
       end
 
