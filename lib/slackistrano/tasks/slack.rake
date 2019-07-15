@@ -63,7 +63,7 @@ namespace :slack do
         if message =~ /Merge branch/
           message.split("\n").reject(&:empty?)[1]
         else
-          match = m.match(/\[\#(\d{4,5})\]/)
+          match = message.match(/\[\#(\d{4,5})\]/)
           next unless match
 
           message
