@@ -61,7 +61,7 @@ namespace :slack do
 
       changelog = commit_messages.map do |message|
         if message =~ /Merge branch/
-          message.split("\n").reject(&:empty?).second
+          message.split("\n").reject(&:empty?)[1]
         else
           match = m.match(/\[\#(\d{4,5})\]/)
           next unless match
