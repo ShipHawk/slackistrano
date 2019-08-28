@@ -37,41 +37,45 @@ namespace :slack do
 
     desc 'Fetch changelog given a start and end git commits'
     task :fetch_changelog do
-      current_revision = fetch(:current_revision).to_s
-      previous_revision = fetch(:previous_revision).to_s
+      begin
+        current_revision = fetch(:current_revision).to_s
+        previous_revision = fetch(:previous_revision).to_s
 
-      if (current_revision.empty? || previous_revision.empty?)
-        puts "Could not get the git commits".yellow
-        next
-      end
-
-      if (current_revision == previous_revision)
-        puts "No changes found".yellow
-        next
-      end
-
-      git = Git.open('.')
-      logs = git.log.between(previous_revision, current_revision)
-      if (logs.nil? || logs.size == 0)
-        puts "No git logs found from #{previous_revision} to #{current_revision}".yellow
-        next
-      end
-
-      commit_messages = logs.map(&:message)
-
-      changelog = commit_messages.map do |message|
-        if message =~ /Merge branch/
-          message.split("\n").reject(&:empty?)[1]
-        else
-          match = message.match(/\[\#(\d{4,5})\]/)
-          next unless match
-
-          message
+        if (current_revision.empty? || previous_revision.empty?)
+          puts "Could not get the git commits".yellow
+          next
         end
-      end.compact.uniq
 
-      puts "Found #{changelog.size} commits for changelog".blue
-      set :changelog, changelog
+        if (current_revision == previous_revision)
+          puts "No changes found".yellow
+          next
+        end
+
+        git = Git.open('.')
+        logs = git.log.between(previous_revision, current_revision)
+        if (logs.nil? || logs.size == 0)
+          puts "No git logs found from #{previous_revision} to #{current_revision}".yellow
+          next
+        end
+
+        commit_messages = logs.map(&:message)
+
+        changelog = commit_messages.map do |message|
+          if message =~ /Merge branch/
+            message.split("\n").reject(&:empty?)[1]
+          else
+            match = message.match(/\[\#(\d{4,5})\]/)
+            next unless match
+
+            message
+          end
+        end.compact.uniq
+
+        puts "Found #{changelog.size} commits for changelog".blue
+        set :changelog, changelog
+      rescue StandardError => e
+        puts e.message.red
+      end
     end
   end
 end
