@@ -28,7 +28,7 @@ module Slackistrano
       end
 
       def stage(default = 'an unknown stage')
-        fetch(:app_namespace, '').presence || fetch(:stage, default)
+        fetch(:app_namespace, fetch(:stage, default))
       end
 
       #
